@@ -1,0 +1,8 @@
+下面是16组超市查货补货建议机器人的代码使用说明
+
+main-function是最主要的代码，可以运行的（我们简称主代码）
+inventory_dashboard里面是前端网页的代码
+lift是Arduino 的代码负责被主代码调用
+main-heatmap是生成热力图的代码负责被前端调用
+main-suggestion生成建议的代码负责被主代码调用前端
+xiaonuo是小诺智能语音的代码负责被主代码调用

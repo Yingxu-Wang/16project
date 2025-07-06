@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>智能商超货物管理系统</title>
+  <style>
+    /* 全局样式 */
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; margin:0; padding:0; background:#f5f7fa; color:#333; }
+    header { background:#4a90e2; color:#fff; padding:20px; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .container { width:90%; max-width:1200px; margin:20px auto; }
+
+    /* 导航按钮 */
+    nav { display:flex; justify-content:center; margin-bottom:20px; }
+    nav button { background:#fff; border:1px solid #4a90e2; color:#4a90e2; padding:10px 20px; margin:0 10px; border-radius:4px; cursor:pointer; transition:all .3s; }
+    nav button:hover, nav button.active { background:#4a90e2; color:#fff; }
+
+    /* 卡片列表 */
+    .inventory-list { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
+    .card { background:#fff; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1); padding:15px; text-align:center; width:180px; }
+    .card img { width:100%; height:120px; object-fit:cover; border-radius:4px; }
+    .card h3 { margin:10px 0 5px; font-size:18px; }
+    .card p { margin:0; font-size:16px; color:#666; }
+
+    /* 智能分析 */
+    section.analysis { background:#fff; padding:20px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1); margin-top:40px; }
+    section.analysis h2 { margin-top:0; display:flex; align-items:center; font-size:20px; }
+    section.analysis span.badge { background:#ffe0b2; color:#bf360c; padding:4px 8px; border-radius:4px; font-size:14px; margin-left:10px; }
+    section.analysis button { margin-top:10px; padding:8px 16px; border:none; background:#4a90e2; color:#fff; border-radius:4px; cursor:pointer; }
+    section.analysis button:hover { background:#357ABD; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>智能商超货物管理系统</h1>
+  </header>
+  <div class="container">
+    <nav>
+      <button id="showInventory" class="active">货物列表</button>
+    </nav>
+
+    <div id="inventoryList" class="inventory-list">
+      <div class="card">
+        <img src="{{ url_for('static', filename='images/chips1.jpg') }}" alt="chips1">
+        <h3>薯惑（爽口青瓜味）</h3>
+        <p id="chips1Count">0 包</p>
+      </div>
+      <div class="card">
+        <img src="{{ url_for('static', filename='images/chips2.jpg') }}" alt="chips2">
+        <h3>薯惑（浓情烤肉味）</h3>
+        <p id="chips2Count">0 包</p>
+      </div>
+      <div class="card">
+        <img src="{{ url_for('static', filename='images/peanuts.jpg') }}" alt="peanuts">
+        <h3>黄飞红麻辣花生</h3>
+        <p id="peanutsCount">0 包</p>
+      </div>
+    </div>
+
+    <section class="analysis">
+      <h2>货物数据智能分析 <span class="badge">基于 DeepSeek</span></h2>
+      <button onclick="fetchAnalysis()">生成分析报表</button>
+      <div>
+        <img id="analysis_img" src="" alt="analysis chart" style="max-width:100%; margin-top:20px;">
+        <p id="analysis_text" style="white-space: pre-wrap; margin-top:10px; color:#333;"></p>
+      </div>
+    </section>
+  </div>
+
+  <!-- 脚本 -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script>
+    // 定时更新库存数量
+    async function updateCounts() {
+      const res = await fetch('/api/inventory');
+      const data = await res.json();
+      data.forEach(item => {
+        const el = document.getElementById(item.name + 'Count');
+        if (el) el.innerText = item.count + ' 包' + (item.missing>0? ' 缺货 '+item.missing+' 包':'');
+      });
+    }
+    setInterval(updateCounts, 1000);
+    updateCounts();
+
+    // 前端分析触发保留原 app.js 中的 fetchAnalysis
+  </script>
+</body>
+</html>
